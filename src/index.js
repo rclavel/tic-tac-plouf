@@ -16,41 +16,47 @@ class Board extends React.Component {
       <Square
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
+        key={i}
       />
     );
+  }
+
+  createToto() {
+    return [0, 1, 2].map((i) => {
+      const toto2 = [0, 1, 2].map((j) => {
+        return this.renderSquare((i * 3 + j))
+      })
+      return (
+        <div className="board-row" key={i}>
+          {toto2}
+        </div>
+      )
+    });
   }
 
   render() {
     return (
       <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
+        { this.createToto() }
       </div>
     );
   }
 }
 
-function HistoryLine(props) {
-  return (
-    <li>
-      <button onClick={() => props.onClick(props.i)}>
-        {`Rollback ${props.i} moves`}
-      </button>
-    </li>
-  );
+class HistoryLine extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <li>
+        <button onClick={() => this.props.onClick(this.props.i)}>
+          {`Rollback ${this.props.i} moves`}
+        </button>
+      </li>
+    );
+  }
 }
 
 function History(props) {
@@ -86,7 +92,7 @@ class TheGame extends React.Component {
   timeTravel(i) {
     this.setState({
       history: this.state.history.slice(i),
-      xIsNext: i % 2 ? this.state.xIsNext : !this.state.xIsNext,
+      xIsNext: i % 2 ? !this.state.xIsNext : this.state.xIsNext,
     });
   }
 
@@ -136,5 +142,9 @@ function findWinner(squares) {
       return squares[a];
     }
   }
-  return null;
+  let playable = squares.some((square) => {
+    return square === null
+  });
+  console.log(playable)
+  return playable ? null : 'NO ONE';
 }
